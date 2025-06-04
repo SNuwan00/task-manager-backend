@@ -19,13 +19,12 @@ public class Task {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private LocalDate startDate;
-    private LocalTime startTime;
+    private String startDate;
+    private String startTime;
 
-    private LocalDate endDate;
-    private LocalTime endTime;
+    private String endDate;
+    private String endTime;
 
-    // One-to-one mapping with status
     @OneToOne(mappedBy = "task", cascade = CascadeType.ALL)
     private TaskStatus taskStatus;
 

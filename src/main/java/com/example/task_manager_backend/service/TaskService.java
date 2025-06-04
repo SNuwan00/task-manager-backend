@@ -2,19 +2,25 @@ package com.example.task_manager_backend.service;
 
 import com.example.task_manager_backend.dto.TaskRequestDTO;
 import com.example.task_manager_backend.dto.TaskResponseDTO;
+import com.example.task_manager_backend.dto.TaskStatusDTO;
 import com.example.task_manager_backend.dto.TaskUpdateDTO;
 import com.example.task_manager_backend.model.Task;
 import com.example.task_manager_backend.model.TaskStatus;
 import com.example.task_manager_backend.model.User;
 import com.example.task_manager_backend.model.enums.TimeStatus;
+import com.example.task_manager_backend.model.enums.UserStatus;
 import com.example.task_manager_backend.repository.TaskRepository;
+import com.example.task_manager_backend.repository.TaskStatusRepository;
 import com.example.task_manager_backend.repository.UserRepository;
+import com.example.task_manager_backend.util.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.example.task_manager_backend.util.DateTimeUtil.convertToDateTime;
 
 @Service
 public class TaskService {
@@ -22,8 +28,14 @@ public class TaskService {
     private TaskRepository taskRepository;
 
     @Autowired
+    private TaskStatusRepository taskStatusRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
+    private DateTimeUtil dateTimeUtil;
+
+    @Transactional
     public TaskResponseDTO createTask(TaskRequestDTO requestDTO) {
         User user = userRepository.findById(requestDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -37,14 +49,24 @@ public class TaskService {
         task.setEndTime(requestDTO.getEndTime());
         task.setUser(user);
 
-        // Create and set task status
-        TaskStatus status = new TaskStatus();
-        status.setTimeStatus(calculateTimeStatus(task));
-        status.setUserStatus(com.example.task_manager_backend.model.enums.UserStatus.NOT_STARTED);
-        task.setTaskStatus(status);
-        status.setTask(task);
-
+        // Save task first to generate taskId
         Task savedTask = taskRepository.save(task);
+
+        TaskStatus status = new TaskStatus();
+        status.setTask(savedTask);
+        status.setTimeStatus(
+                dateTimeUtil.getTimeStatus(
+                        convertToDateTime(savedTask.getStartDate(),savedTask.getStartTime()),
+                        convertToDateTime(savedTask.getEndDate(),savedTask.getEndTime()))
+        ); // Set to null initially, will be updated later
+        status.setUserStatus(UserStatus.NOT_STARTED);
+        status.setLastUpdated(null);
+
+        TaskStatus savedTaskStatus = taskStatusRepository.save(status);
+
+        // Set the status back to the task
+        //savedTask.setTaskStatus(status);
+
         return mapToResponseDTO(savedTask);
     }
 
@@ -54,6 +76,7 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public TaskResponseDTO updateTask(Long id, TaskUpdateDTO updateDTO) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
@@ -85,32 +108,19 @@ public class TaskService {
             task.setTaskStatus(status);
         }
 
-        status.setTimeStatus(calculateTimeStatus(task));
-        if (updateDTO.getUserStatus() != null) {
-            status.setUserStatus(updateDTO.getUserStatus());
-        }
 
+
+        taskStatusRepository.save(status);
         Task updatedTask = taskRepository.save(task);
         return mapToResponseDTO(updatedTask);
     }
 
+    @Transactional
     public void deleteTask(Long id) {
+        // The task status will be deleted automatically due to the cascade relationship
         taskRepository.deleteById(id);
     }
 
-    private TimeStatus calculateTimeStatus(Task task) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startDateTime = LocalDateTime.of(task.getStartDate(), task.getStartTime());
-        LocalDateTime endDateTime = LocalDateTime.of(task.getEndDate(), task.getEndTime());
-
-        if (now.isBefore(startDateTime)) {
-            return TimeStatus.UPCOMING;
-        } else if (now.isAfter(endDateTime)) {
-            return TimeStatus.ENDED;
-        } else {
-            return TimeStatus.IN_PROGRESS;
-        }
-    }
 
     private TaskResponseDTO mapToResponseDTO(Task task) {
         TaskResponseDTO dto = new TaskResponseDTO();

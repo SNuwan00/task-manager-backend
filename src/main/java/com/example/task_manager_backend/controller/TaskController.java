@@ -20,7 +20,7 @@ public class TaskController {
     private TaskService taskService;
 
     @Operation(summary = "Create a new task")
-    @PostMapping
+    @PostMapping("/save")
     public ResponseEntity<TaskResponseDTO> createTask(@RequestBody TaskRequestDTO taskRequest) {
         TaskResponseDTO createdTask = taskService.createTask(taskRequest);
         return new ResponseEntity<>(createdTask, HttpStatus.CREATED);
