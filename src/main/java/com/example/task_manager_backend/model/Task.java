@@ -28,4 +28,8 @@ public class Task {
     // One-to-one mapping with status
     @OneToOne(mappedBy = "task", cascade = CascadeType.ALL)
     private TaskStatus taskStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }
