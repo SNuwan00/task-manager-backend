@@ -1,5 +1,7 @@
 package com.example.task_manager_backend.controller;
 
+import com.example.task_manager_backend.dto.LoginRequestDTO;
+import com.example.task_manager_backend.dto.SignupRequestDTO;
 import com.example.task_manager_backend.model.User;
 import com.example.task_manager_backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,13 +20,17 @@ public class UserController {
 
     @Operation(summary = "Sign up a new user")
     @PostMapping("/signup")
-    public ResponseEntity<User> signup(@RequestBody User user) {
+    public ResponseEntity<User> signup(@RequestBody SignupRequestDTO signupRequest) {
+        User user = new User();
+        user.setUsername(signupRequest.getUsername());
+        user.setEmail(signupRequest.getEmail());
+        user.setPassword(signupRequest.getPassword());
         return ResponseEntity.ok(userService.signup(user));
     }
 
     @Operation(summary = "Log in a user")
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody User loginRequest) {
+    public ResponseEntity<User> login(@RequestBody LoginRequestDTO loginRequest) {
         User user = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
         if (user != null) {
             return ResponseEntity.ok(user);
