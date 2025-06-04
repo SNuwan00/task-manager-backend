@@ -23,8 +23,9 @@ public class DotEnvConfig {
                 .driverClassName("com.mysql.cj.jdbc.Driver")
                 .build();
     }
-//    @Bean
-//    public Dotenv dotenv() {
-//        return Dotenv.configure().load();
-//    }
+    
+    @Bean
+    public Dotenv dotenv() {
+        return Dotenv.configure().load();
+    }
 }
