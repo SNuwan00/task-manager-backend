@@ -1,5 +1,7 @@
 package com.example.task_manager_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -25,6 +27,8 @@ public class Task {
     private String endDate;
     private String endTime;
 
+    @JsonIgnore
+    @JsonManagedReference
     @OneToOne(mappedBy = "task", cascade = CascadeType.ALL)
     private TaskStatus taskStatus;
 

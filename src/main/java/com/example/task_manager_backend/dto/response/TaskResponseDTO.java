@@ -1,4 +1,4 @@
-package com.example.task_manager_backend.dto;
+package com.example.task_manager_backend.dto.response;
 
 import com.example.task_manager_backend.model.enums.TimeStatus;
 import com.example.task_manager_backend.model.enums.UserStatus;

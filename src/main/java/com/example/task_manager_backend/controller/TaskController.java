@@ -1,8 +1,9 @@
 package com.example.task_manager_backend.controller;
 
-import com.example.task_manager_backend.dto.TaskRequestDTO;
-import com.example.task_manager_backend.dto.TaskResponseDTO;
-import com.example.task_manager_backend.dto.TaskUpdateDTO;
+import com.example.task_manager_backend.dto.TaskDetailsDTO;
+import com.example.task_manager_backend.dto.request.TaskRequestDTO;
+import com.example.task_manager_backend.dto.response.TaskResponseDTO;
+import com.example.task_manager_backend.dto.update.TaskUpdateDTO;
 import com.example.task_manager_backend.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,5 +46,11 @@ public class TaskController {
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/user/{userId}/all")
+    public ResponseEntity<List<TaskDetailsDTO>> getTaskDetailsByUserId(@PathVariable Long userId) {
+        List<TaskDetailsDTO> taskDetails = taskService.getTaskDetailsByUserId(userId);
+        return ResponseEntity.ok(taskDetails);
     }
 }

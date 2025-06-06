@@ -1,4 +1,4 @@
-package com.example.task_manager_backend.dto;
+package com.example.task_manager_backend.dto.request;
 
 import lombok.Data;
 

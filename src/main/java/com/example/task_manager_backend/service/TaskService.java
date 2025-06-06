@@ -1,13 +1,12 @@
 package com.example.task_manager_backend.service;
 
-import com.example.task_manager_backend.dto.TaskRequestDTO;
-import com.example.task_manager_backend.dto.TaskResponseDTO;
-import com.example.task_manager_backend.dto.TaskStatusDTO;
-import com.example.task_manager_backend.dto.TaskUpdateDTO;
+import com.example.task_manager_backend.dto.TaskDetailsDTO;
+import com.example.task_manager_backend.dto.request.TaskRequestDTO;
+import com.example.task_manager_backend.dto.response.TaskResponseDTO;
+import com.example.task_manager_backend.dto.update.TaskUpdateDTO;
 import com.example.task_manager_backend.model.Task;
 import com.example.task_manager_backend.model.TaskStatus;
 import com.example.task_manager_backend.model.User;
-import com.example.task_manager_backend.model.enums.TimeStatus;
 import com.example.task_manager_backend.model.enums.UserStatus;
 import com.example.task_manager_backend.repository.TaskRepository;
 import com.example.task_manager_backend.repository.TaskStatusRepository;
@@ -144,5 +143,9 @@ public class TaskService {
         }
 
         return dto;
+    }
+
+    public List<TaskDetailsDTO> getTaskDetailsByUserId(Long userId) {
+        return taskRepository.findTaskDetailsByUserId(userId);
     }
 }

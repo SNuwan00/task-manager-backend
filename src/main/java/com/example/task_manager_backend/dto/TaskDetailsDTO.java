@@ -1,17 +1,14 @@
 package com.example.task_manager_backend.dto;
 
+import com.example.task_manager_backend.model.enums.TimeStatus;
 import com.example.task_manager_backend.model.enums.UserStatus;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class TaskUpdateDTO {
+@AllArgsConstructor
+public class TaskDetailsDTO {
     private String title;
-    private String description;
-    private String startDate;
-    private String startTime;
-    private String endDate;
-    private String endTime;
     private UserStatus userStatus;
-
-
+    private TimeStatus timeStatus;
 }
