@@ -56,4 +56,13 @@ public class TaskController {
         List<TaskDetailsDTO> taskDetails = taskService.getTaskDetailsByUserId(userId, page, size);
         return ResponseEntity.ok(taskDetails);
     }
+
+    @GetMapping("/user/{userId}/all-done")
+    public ResponseEntity<List<TaskDetailsDTO>> getDoneTaskDetailsByUserId(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size) {
+        List<TaskDetailsDTO> taskDetails = taskService.getDoneTaskDetailsByUserId(userId, page, size);
+        return ResponseEntity.ok(taskDetails);
+    }
 }

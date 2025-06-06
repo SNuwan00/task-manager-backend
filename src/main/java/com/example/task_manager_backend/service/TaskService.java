@@ -151,4 +151,9 @@ public class TaskService {
         Pageable pageable = PageRequest.of(page, size);
         return taskRepository.findTaskDetailsByUserId(userId, pageable).getContent();
     }
+
+    public List<TaskDetailsDTO> getDoneTaskDetailsByUserId(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return taskRepository.findDoneTaskDetailsByUserId(userId, pageable).getContent();
+    }
 }
