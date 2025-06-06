@@ -1,7 +1,7 @@
 package com.example.task_manager_backend.controller;
 
-import com.example.task_manager_backend.dto.LoginRequestDTO;
-import com.example.task_manager_backend.dto.SignupRequestDTO;
+import com.example.task_manager_backend.dto.request.LoginRequestDTO;
+import com.example.task_manager_backend.dto.request.SignupRequestDTO;
 import com.example.task_manager_backend.model.User;
 import com.example.task_manager_backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;

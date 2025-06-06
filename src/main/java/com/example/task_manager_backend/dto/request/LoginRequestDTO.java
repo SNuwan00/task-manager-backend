@@ -1,19 +1,10 @@
-package com.example.task_manager_backend.dto;
+package com.example.task_manager_backend.dto.request;
 
-public class SignupRequestDTO {
-    private String username;
+public class LoginRequestDTO {
     private String email;
     private String password;
 
     // Getters and Setters
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public String getEmail() {
         return email;
     }

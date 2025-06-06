@@ -1,7 +1,12 @@
 package com.example.task_manager_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "tasks")
@@ -9,17 +14,25 @@ import lombok.Data;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long taskId;
 
-    @Column(nullable = false)
     private String title;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false)
-    private String status;
+    private String startDate;
+    private String startTime;
+
+    private String endDate;
+    private String endTime;
+
+    @JsonIgnore
+    @JsonManagedReference
+    @OneToOne(mappedBy = "task", cascade = CascadeType.ALL)
+    private TaskStatus taskStatus;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
