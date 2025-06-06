@@ -49,8 +49,11 @@ public class TaskController {
     }
 
     @GetMapping("/user/{userId}/all")
-    public ResponseEntity<List<TaskDetailsDTO>> getTaskDetailsByUserId(@PathVariable Long userId) {
-        List<TaskDetailsDTO> taskDetails = taskService.getTaskDetailsByUserId(userId);
+    public ResponseEntity<List<TaskDetailsDTO>> getTaskDetailsByUserId(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size) {
+        List<TaskDetailsDTO> taskDetails = taskService.getTaskDetailsByUserId(userId, page, size);
         return ResponseEntity.ok(taskDetails);
     }
 }

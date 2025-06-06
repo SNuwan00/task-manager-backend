@@ -13,6 +13,8 @@ import com.example.task_manager_backend.repository.TaskStatusRepository;
 import com.example.task_manager_backend.repository.UserRepository;
 import com.example.task_manager_backend.util.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -145,7 +147,8 @@ public class TaskService {
         return dto;
     }
 
-    public List<TaskDetailsDTO> getTaskDetailsByUserId(Long userId) {
-        return taskRepository.findTaskDetailsByUserId(userId);
+    public List<TaskDetailsDTO> getTaskDetailsByUserId(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return taskRepository.findTaskDetailsByUserId(userId, pageable).getContent();
     }
 }
