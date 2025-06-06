@@ -2,6 +2,7 @@ package com.example.task_manager_backend.model;
 
 import com.example.task_manager_backend.model.enums.TimeStatus;
 import com.example.task_manager_backend.model.enums.UserStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,6 +17,7 @@ public class TaskStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long statusId;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "task_id", referencedColumnName = "taskId")
     private Task task;

@@ -1,5 +1,7 @@
 package com.example.task_manager_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,13 +21,14 @@ public class Task {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private LocalDate startDate;
-    private LocalTime startTime;
+    private String startDate;
+    private String startTime;
 
-    private LocalDate endDate;
-    private LocalTime endTime;
+    private String endDate;
+    private String endTime;
 
-    // One-to-one mapping with status
+    @JsonIgnore
+    @JsonManagedReference
     @OneToOne(mappedBy = "task", cascade = CascadeType.ALL)
     private TaskStatus taskStatus;
 
