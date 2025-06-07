@@ -3,33 +3,86 @@ name: Deploy Spring Boot to EC2
 on:
   push:
     branches:
-      - awsHostedBrabch
+      - main  # Change to your main branch name
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Copy files via SSH
-        uses: appleboy/scp-action@master
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_KEY }}
-          source: "."
-          target: "/home/ec2-user/app"
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
 
-      - name: Run app on EC2
+      - name: Build with Maven
+        run: |
+          ./mvnw clean package -DskipTests
+          
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.EC2_KEY }}
+          known_hosts: '' # Empty value
+          if_key_exists: replace
+          config: |
+            Host *
+              StrictHostKeyChecking no
+      
+      - name: Create directory on server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ec2-user
           key: ${{ secrets.EC2_KEY }}
           script: |
-            cd /home/ec2-user/app
-            ./mvnw clean install
-            pkill -f 'java' || true
-            nohup java -jar target/*.jar > backend.log 2>&1 &
+            mkdir -p /home/ec2-user/app/task-manager-backend
+            mkdir -p /home/ec2-user/app/task-manager-backend/uploads
+
+      - name: Copy JAR file to EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_KEY }}
+          source: "target/*.jar,src/main/resources/.env"
+          target: "/home/ec2-user/app/task-manager-backend"
+          strip_components: 1
+          timeout: "60s"
+          overwrite: true
+
+      - name: Deploy application
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            cd /home/ec2-user/app/task-manager-backend
+            # Stop any running instances
+            PID=$(pgrep -f "task-manager-backend*.jar" || echo "")
+            if [ ! -z "$PID" ]; then
+              echo "Stopping existing application with PID: $PID"
+              kill -15 $PID || true
+              sleep 5
+            fi
+            
+            # Start the application
+            echo "Starting application..."
+            nohup java -jar target/task-manager-backend-*.jar > app.log 2>&1 &
+            
+            # Wait for application to start
+            sleep 10
+            if pgrep -f "task-manager-backend*.jar" > /dev/null; then
+              echo "Application started successfully"
+            else
+              echo "Failed to start application"
+              tail -n 50 app.log
+              exit 1
+            fi
