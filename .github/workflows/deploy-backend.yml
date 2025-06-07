@@ -2,7 +2,8 @@ name: Deploy Spring Boot to EC2
 
 on:
   push:
-    branches: awsHostedBrabch
+    branches:
+      - awsHostedBrabch
 
 jobs:
   deploy:
