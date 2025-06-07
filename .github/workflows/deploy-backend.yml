@@ -1,0 +1,35 @@
+name: Deploy Spring Boot to EC2
+
+on:
+  push:
+    branches:
+      - aws-hosting-branch-name
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Copy files via SSH
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_KEY }}
+          source: "."
+          target: "/home/ec2-user/app"
+
+      - name: Run app on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            cd /home/ec2-user/app
+            ./mvnw clean install
+            pkill -f 'java' || true
+            nohup java -jar target/*.jar > backend.log 2>&1 &
