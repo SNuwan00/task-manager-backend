@@ -39,20 +39,20 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
+          username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
-            mkdir -p /home/ec2-user/app/task-manager-backend
-            mkdir -p /home/ec2-user/app/task-manager-backend/uploads
+            mkdir -p /home/ubuntu/app/task-manager-backend
+            mkdir -p /home/ubuntu/app/task-manager-backend/uploads
 
       - name: Copy JAR file to EC2
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
+          username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           source: "target/*.jar,src/main/resources/.env"
-          target: "/home/ec2-user/app/task-manager-backend"
+          target: "/home/ubuntu/app/task-manager-backend"
           strip_components: 1
           timeout: "60s"
           overwrite: true
@@ -61,10 +61,10 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
+          username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
-            cd /home/ec2-user/app/task-manager-backend
+            cd /home/ubuntu/app/task-manager-backend
             # Stop any running instances
             PID=$(pgrep -f "task-manager-backend*.jar" || echo "")
             if [ ! -z "$PID" ]; then
