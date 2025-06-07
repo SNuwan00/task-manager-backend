@@ -38,7 +38,7 @@ jobs:
       - name: Create directory on server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: 13.250.45.145
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
@@ -48,7 +48,7 @@ jobs:
       - name: Copy JAR file to EC2
         uses: appleboy/scp-action@v0.1.4
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: 13.250.45.145
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           source: "target/*.jar,src/main/resources/.env"
@@ -60,7 +60,7 @@ jobs:
       - name: Deploy application
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: 13.250.45.145
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
