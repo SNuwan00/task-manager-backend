@@ -1,5 +1,6 @@
 package com.example.task_manager_backend.service;
 
+import com.example.task_manager_backend.dto.response.UserDitailsResponseDTO;
 import com.example.task_manager_backend.model.User;
 import com.example.task_manager_backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,16 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public UserDitailsResponseDTO mapToUserDetailsResponseDTO(User user) {
+        UserDitailsResponseDTO dto = new UserDitailsResponseDTO();
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setProfilePhotoPath(user.getProfilePhotoPath());
+        return dto;
+    }
+
     public User getUser(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        return user;
     }
 }

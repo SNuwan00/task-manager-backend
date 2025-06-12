@@ -2,6 +2,7 @@ package com.example.task_manager_backend.controller;
 
 import com.example.task_manager_backend.dto.request.LoginRequestDTO;
 import com.example.task_manager_backend.dto.request.SignupRequestDTO;
+import com.example.task_manager_backend.dto.response.UserDitailsResponseDTO;
 import com.example.task_manager_backend.model.User;
 import com.example.task_manager_backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,7 +50,9 @@ public class UserController {
 
     @Operation(summary = "Get user by ID")
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUser(id));
+    public ResponseEntity<UserDitailsResponseDTO> getUser(@PathVariable Long id) {
+        User user = userService.getUser(id);
+        UserDitailsResponseDTO userDetails = userService.mapToUserDetailsResponseDTO(user);
+        return ResponseEntity.ok(userDetails);
     }
 }
