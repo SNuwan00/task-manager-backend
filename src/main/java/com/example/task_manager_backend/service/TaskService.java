@@ -2,6 +2,7 @@ package com.example.task_manager_backend.service;
 
 import com.example.task_manager_backend.dto.TaskDetailsDTO;
 import com.example.task_manager_backend.dto.request.TaskRequestDTO;
+import com.example.task_manager_backend.dto.response.TaskDetailsResponseDTO;
 import com.example.task_manager_backend.dto.response.TaskResponseDTO;
 import com.example.task_manager_backend.dto.update.TaskUpdateDTO;
 import com.example.task_manager_backend.model.Task;
@@ -155,5 +156,12 @@ public class TaskService {
     public List<TaskDetailsDTO> getDoneTaskDetailsByUserId(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return taskRepository.findDoneTaskDetailsByUserId(userId, pageable).getContent();
+    }
+
+    public TaskDetailsResponseDTO getTaskDetailsById(Long taskId) {
+        TaskDetailsResponseDTO task = taskRepository.findAllDetailsById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+
+        return task;
     }
 }
