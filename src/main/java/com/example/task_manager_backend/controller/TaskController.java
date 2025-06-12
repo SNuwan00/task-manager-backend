@@ -2,6 +2,7 @@ package com.example.task_manager_backend.controller;
 
 import com.example.task_manager_backend.dto.TaskDetailsDTO;
 import com.example.task_manager_backend.dto.request.TaskRequestDTO;
+import com.example.task_manager_backend.dto.response.TaskDetailsResponseDTO;
 import com.example.task_manager_backend.dto.response.TaskResponseDTO;
 import com.example.task_manager_backend.dto.update.TaskUpdateDTO;
 import com.example.task_manager_backend.service.TaskService;
@@ -49,8 +50,33 @@ public class TaskController {
     }
 
     @GetMapping("/user/{userId}/all")
-    public ResponseEntity<List<TaskDetailsDTO>> getTaskDetailsByUserId(@PathVariable Long userId) {
-        List<TaskDetailsDTO> taskDetails = taskService.getTaskDetailsByUserId(userId);
+    public ResponseEntity<List<TaskDetailsDTO>> getTaskDetailsByUserId(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size) {
+        List<TaskDetailsDTO> taskDetails = taskService.getTaskDetailsByUserId(userId, page, size);
         return ResponseEntity.ok(taskDetails);
+    }
+
+    @GetMapping("/user/{userId}/all-done")
+    public ResponseEntity<List<TaskDetailsDTO>> getDoneTaskDetailsByUserId(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size) {
+        List<TaskDetailsDTO> taskDetails = taskService.getDoneTaskDetailsByUserId(userId, page, size);
+        return ResponseEntity.ok(taskDetails);
+    }
+
+    @Operation(summary = "Get detailed task information by ID")
+    @GetMapping("/{taskId}/details")
+    public ResponseEntity<TaskDetailsResponseDTO> getTaskDetailsById(@PathVariable Long taskId) {
+        try {
+            TaskDetailsResponseDTO taskDetails = taskService.getTaskDetailsById(taskId);
+            return ResponseEntity.ok(taskDetails);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        }
+
     }
 }

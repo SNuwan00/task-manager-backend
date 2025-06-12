@@ -2,6 +2,7 @@ package com.example.task_manager_backend.service;
 
 import com.example.task_manager_backend.dto.TaskDetailsDTO;
 import com.example.task_manager_backend.dto.request.TaskRequestDTO;
+import com.example.task_manager_backend.dto.response.TaskDetailsResponseDTO;
 import com.example.task_manager_backend.dto.response.TaskResponseDTO;
 import com.example.task_manager_backend.dto.update.TaskUpdateDTO;
 import com.example.task_manager_backend.model.Task;
@@ -13,6 +14,8 @@ import com.example.task_manager_backend.repository.TaskStatusRepository;
 import com.example.task_manager_backend.repository.UserRepository;
 import com.example.task_manager_backend.util.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -145,7 +148,20 @@ public class TaskService {
         return dto;
     }
 
-    public List<TaskDetailsDTO> getTaskDetailsByUserId(Long userId) {
-        return taskRepository.findTaskDetailsByUserId(userId);
+    public List<TaskDetailsDTO> getTaskDetailsByUserId(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return taskRepository.findTaskDetailsByUserId(userId, pageable).getContent();
+    }
+
+    public List<TaskDetailsDTO> getDoneTaskDetailsByUserId(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return taskRepository.findDoneTaskDetailsByUserId(userId, pageable).getContent();
+    }
+
+    public TaskDetailsResponseDTO getTaskDetailsById(Long taskId) {
+        TaskDetailsResponseDTO task = taskRepository.findAllDetailsById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+
+        return task;
     }
 }

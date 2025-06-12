@@ -11,4 +11,6 @@ public class TaskDetailsDTO {
     private String title;
     private UserStatus userStatus;
     private TimeStatus timeStatus;
+
 }
+
