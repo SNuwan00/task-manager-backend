@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class TaskDetailsDTO {
+    private Long taskId;
     private String title;
     private UserStatus userStatus;
     private TimeStatus timeStatus;
