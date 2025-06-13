@@ -15,14 +15,14 @@ import java.util.Optional;
 public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByUserId(Long userId);
 
-    @Query("SELECT new com.example.task_manager_backend.dto.TaskDetailsDTO(t.title, ts.userStatus, ts.timeStatus) " +
+    @Query("SELECT new com.example.task_manager_backend.dto.TaskDetailsDTO(t.taskId, t.title, ts.userStatus, ts.timeStatus) " +
             "FROM Task t " +
             "JOIN t.taskStatus ts " +
             "WHERE t.user.id = :userId AND ts.userStatus <> com.example.task_manager_backend.model.enums.UserStatus.DONE " +
             "ORDER BY t.startDate ASC")
     Page<TaskDetailsDTO> findTaskDetailsByUserId(@Param("userId") Long userId, Pageable pageable);
 
-    @Query("SELECT new com.example.task_manager_backend.dto.TaskDetailsDTO(t.title, ts.userStatus, ts.timeStatus) " +
+    @Query("SELECT new com.example.task_manager_backend.dto.TaskDetailsDTO(t.taskId, t.title, ts.userStatus, ts.timeStatus) " +
             "FROM Task t " +
             "JOIN t.taskStatus ts " +
             "WHERE t.user.id = :userId AND ts.userStatus = com.example.task_manager_backend.model.enums.UserStatus.DONE " +
