@@ -36,14 +36,14 @@ public class TaskController {
     }
 
     @Operation(summary = "Update a task")
-    @PutMapping("/{id}")
+    @PutMapping("/edit/{id}")
     public ResponseEntity<TaskResponseDTO> updateTask(@PathVariable Long id, @RequestBody TaskUpdateDTO taskUpdate) {
         TaskResponseDTO updatedTask = taskService.updateTask(id, taskUpdate);
         return ResponseEntity.ok(updatedTask);
     }
 
     @Operation(summary = "Delete a task")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
@@ -77,6 +77,26 @@ public class TaskController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
         }
+    }
 
+    @Operation(summary = "Update detailed task information by ID")
+    @PutMapping("/{taskId}/detailsUpdate")
+    public ResponseEntity<TaskDetailsResponseDTO> updateTaskDetailsById(@PathVariable Long taskId, @RequestBody TaskDetailsResponseDTO updateDTO){
+        try {
+            TaskDetailsResponseDTO taskDetails = taskService.updateTaskDetailsById(
+                    taskId,
+                    updateDTO.getTitle(),
+                    updateDTO.getDescription(),
+                    updateDTO.getStartDate(),
+                    updateDTO.getStartTime(),
+                    updateDTO.getEndDate(),
+                    updateDTO.getEndTime(),
+                    updateDTO.getTimeStatus(),
+                    updateDTO.getUserStatus()
+                    );
+            return ResponseEntity.ok(taskDetails);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }

@@ -8,6 +8,7 @@ import com.example.task_manager_backend.dto.update.TaskUpdateDTO;
 import com.example.task_manager_backend.model.Task;
 import com.example.task_manager_backend.model.TaskStatus;
 import com.example.task_manager_backend.model.User;
+import com.example.task_manager_backend.model.enums.TimeStatus;
 import com.example.task_manager_backend.model.enums.UserStatus;
 import com.example.task_manager_backend.repository.TaskRepository;
 import com.example.task_manager_backend.repository.TaskStatusRepository;
@@ -163,5 +164,31 @@ public class TaskService {
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
 
         return task;
+    }
+
+    public TaskDetailsResponseDTO updateTaskDetailsById(Long taskId, String title, String description, String startDate, String startTime, String endDate, String endTime,TimeStatus timeStatus, UserStatus userStatus) {
+        DateTimeUtil dateTimeUtil = new DateTimeUtil();
+
+        int update1 = taskRepository.updateDetailsById(
+                        taskId,
+                        title,
+                        description,
+                        startDate,
+                        startTime,
+                        endDate,
+                        endTime
+                    );
+        int update2 = taskStatusRepository.updateStatusByTaskId(
+                        taskId,
+                        userStatus,
+                        dateTimeUtil.getTimeStatus(
+                                convertToDateTime(startDate, startTime),
+                                convertToDateTime(endDate, endTime)
+                        )
+                    );
+        if (update1 == 0 && update2 == 0) {
+                throw new RuntimeException("Task not found with id: " + taskId);
+        }
+        return getTaskDetailsById(taskId);
     }
 }
